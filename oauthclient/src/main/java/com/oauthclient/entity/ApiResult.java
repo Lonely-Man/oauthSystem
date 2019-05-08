@@ -18,7 +18,7 @@ public class ApiResult<T> {
         apiResult.setTotal(total);
         return apiResult;
     }
-    public static<T> ApiResult<T> buildFailApiResult(String code,String message,T data,long total){
+    public static<T> ApiResult<T> buildFailApiResult(T data,long total,String code,String message){
         ApiResult<T> apiResult=new ApiResult<>();
         apiResult.setSuccess(false);
         apiResult.setCode(code);

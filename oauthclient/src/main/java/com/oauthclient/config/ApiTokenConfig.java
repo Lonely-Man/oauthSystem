@@ -2,42 +2,42 @@ package com.oauthclient.config;
 
 import com.oauthclient.annotation.ApiToken;
 import com.oauthclient.entity.ApiResult;
-import lombok.Getter;
-import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.Signature;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpRequest;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
+
 
 @Component
 @Aspect
 public class ApiTokenConfig {
+    @Autowired
+    private RedisTemplate redisTemplate;
     private static final String type="token";
     @Autowired
     private HttpServletRequest request;
     @Around("@annotation(com.oauthclient.annotation.ApiToken)")
-    public ApiResult dd(ProceedingJoinPoint joinPoint ) throws Throwable{
+    public ApiResult tokenCheck(ProceedingJoinPoint joinPoint ) throws Throwable{
         String token=request.getHeader(type);
         if(token==null){
-            return ApiResult.buildFailApiResult("-1","无令牌",null,0);
+            return ApiResult.buildFailApiResult(null,1,"1","无令牌");
         }
-        Signature signature=joinPoint.getSignature();
-        MethodSignature methodSignature=(MethodSignature)signature;
-        ApiToken apiToken=methodSignature.getMethod().getAnnotation(ApiToken.class);
+        //Object redisToken=redisTemplate.opsForValue().get(type);
+      if(!redisTemplate.hasKey(token)){
+          return ApiResult.buildFailApiResult(null,1,"1","失效令牌");
+      }
+        MethodSignature signature = (MethodSignature) joinPoint.getSignature();
+
+        ApiToken apiToken=signature.getMethod().getAnnotation(ApiToken.class);
         String value=apiToken.value();
         //todo 业务判断
 
-        joinPoint.proceed();
-        return ApiResult.buildSuccessApiResult(null,null,null,0);
+
+        return (ApiResult)joinPoint.proceed();
     }
 }
