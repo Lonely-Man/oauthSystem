@@ -27,7 +27,6 @@ public class ApiTokenConfig {
         if(token==null){
             return ApiResult.buildFailApiResult(null,1,"1","无令牌");
         }
-        //Object redisToken=redisTemplate.opsForValue().get(type);
       if(!redisTemplate.hasKey(token)){
           return ApiResult.buildFailApiResult(null,1,"1","失效令牌");
       }
