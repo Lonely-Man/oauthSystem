@@ -1,4 +1,7 @@
 package com.oauthclient.mapper;
 
-public interface UserMapper {
+import com.oauthclient.entity.User;
+import tk.mybatis.mapper.common.BaseMapper;
+
+public interface UserMapper extends BaseMapper<User> {
 }

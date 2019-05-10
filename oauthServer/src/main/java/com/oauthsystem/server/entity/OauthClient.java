@@ -5,11 +5,10 @@ import lombok.Data;
 import javax.persistence.Table;
 
 @Data
-@Table(name = "user")
-public class User {
+@Table(name = "oauth_client")
+public class OauthClient {
     private String id;
-    private String loginName;
-    private String password;
+    private String name;
     private String clientId;
     private String clientSecret;
 }
